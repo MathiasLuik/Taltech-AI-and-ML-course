@@ -14,7 +14,8 @@ import search
 class EightPuzzle(search.Problem):
     def actions(self, state):
         print("I'm in EightPuzzle.actions")
-        
+        numberInState=find_location(state)
+        print(numberInState) #õide
         # returnib actionite listi
         #return action
         print(state)
@@ -54,22 +55,27 @@ class EightPuzzle(search.Problem):
 #leia esmalt tühja koha indeks. ja tema naabrid. 
 # leiad indeks 8-5, indeks 7-4, indeks 6-3 ja 5-2,4-1,3-0 ja saad teada, et moved peavad olema seotud 3ga ülesse ja alla . See on püsti
 # kõrvale minnes on -1. Indeks 2-1
-def find_location(map,findCharacter):
-    for x in range(len(map)):
-        for y in range(len(map[x])):
-            if (map[x][y])==findCharacter:
-                results=(x,y)       
-    return results
+def find_location(state):
+    i=-1
+    for number in state:
+        i+=1
+        #print(state[i])
+        if state[i]==0:
+            
+            return i
+        
 inistate = (1,2,3,7,0,5,8,4,6)
 goal =(1,2,3,4,5,6,7,8,9,0) 
 def mainBrain(inistate, goal):
+    #location=find_location(inistate)
+    #print(location)
     problem = EightPuzzle(inistate, goal)
     #print(problem[inistate])
     print("---")
     goalnode = search.breadth_first_graph_search(problem)
     # sammud (tegevused, käigud) algolekust lõppolekuni
-    print(goalnode.solution())
+    #print(goalnode.solution())
     # olekud algolekust lõppolekuni
-    print(goalnode.path())
+    #print(goalnode.path())
 
 mainBrain(inistate,goal)

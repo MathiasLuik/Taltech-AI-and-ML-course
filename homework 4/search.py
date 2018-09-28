@@ -35,6 +35,7 @@ class Problem(object):
         """The constructor specifies the initial state, and possibly a goal
         state, if there is a unique goal. Your subclass's constructor can add
         other arguments."""
+        #print(goal)
         self.initial = initial
         self.goal = goal
 
@@ -95,6 +96,9 @@ class Node:
     def __init__(self, state, parent=None, action=None, path_cost=0):
         """Create a search tree Node, derived from a parent by an action."""
         print("I'm in Node.__init__")
+        #print(state) #state
+        #print(parent) #None
+        #print(action) #None
         self.state = state
         self.parent = parent
         self.action = action
@@ -258,17 +262,21 @@ def breadth_first_graph_search(problem):
     node = Node(problem.initial)
     print("-")
     print(node)
+    print("-")
     if problem.goal_test(node.state):
+        print("problem.goal_test=state")
         return node
-    frontier = deque([node])
-    explored = set()
     print("--")
+    frontier = deque([node])
+    print(frontier)
+    explored = set()
+    print("---")
     while frontier:
-        print("---")
+        print("----")
         node = frontier.popleft()
         explored.add(node.state)
         for child in node.expand(problem):
-            print("----")
+            print("-----")
             if child.state not in explored and child not in frontier:
                 if problem.goal_test(child.state):
                     return child
