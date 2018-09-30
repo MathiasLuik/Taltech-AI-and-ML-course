@@ -95,7 +95,7 @@ class Node:
 
     def __init__(self, state, parent=None, action=None, path_cost=0):
         """Create a search tree Node, derived from a parent by an action."""
-        print("I'm in Node.__init__")
+        #print("I'm in Node.__init__")
         #print(state) #state
         #print(parent) #None
         #print(action) #None
@@ -116,15 +116,16 @@ class Node:
         return self.state < node.state
 
     def expand(self, problem):
-        print("I'm in Node.epand")
+        # print("I'm in Node.epand")
         """List the nodes reachable in one step from this node."""
         return [self.child_node(problem, action)
                 for action in problem.actions(self.state)]
 
     def child_node(self, problem, action):
-        print("I'm in Node.child_node")
+        #print("I'm in Node.child_node")
         """[Figure 3.10]"""
         next_state = problem.result(self.state, action)
+        #print(next_state)
         next_node = Node(next_state, self, action,
                     problem.path_cost(self.path_cost, self.state,
                                       action, next_state))
@@ -150,7 +151,7 @@ class Node:
     # want in other contexts.]
 
     def __eq__(self, other):
-        print("I'm in Node.__eq__")
+        #print("I'm in Node.__eq__")
         return isinstance(other, Node) and self.state == other.state
 
     def __hash__(self):
@@ -243,8 +244,10 @@ def depth_first_graph_search(problem):
     while frontier:
         node = frontier.pop()
         if problem.goal_test(node.state):
+            #print(state)
             return node
         explored.add(node.state)
+        #print(child)
         frontier.extend(child for child in node.expand(problem)
                         if child.state not in explored and
                         child not in frontier)
@@ -261,7 +264,7 @@ def breadth_first_graph_search(problem):
     #print(problem)
     node = Node(problem.initial)
     print("-")
-    print(node)
+    #print(node)
     print("-")
     if problem.goal_test(node.state):
         print("problem.goal_test=state")
@@ -275,7 +278,11 @@ def breadth_first_graph_search(problem):
         print("----")
         node = frontier.popleft()
         explored.add(node.state)
+        #print(frontier)
+    #print(node.expand(problem))
+        #print(node)
         for child in node.expand(problem):
+            #print(child)
             print("-----")
             if child.state not in explored and child not in frontier:
                 if problem.goal_test(child.state):
@@ -1537,7 +1544,6 @@ class InstrumentedProblem(Problem):
         self.problem = problem
         self.succs = self.goal_tests = self.states = 0
         self.found = None
-
     def actions(self, state):
         self.succs += 1
         return self.problem.actions(state)
@@ -1548,7 +1554,9 @@ class InstrumentedProblem(Problem):
 
     def goal_test(self, state):
         self.goal_tests += 1
+        #print(goal_tests)
         result = self.problem.goal_test(state)
+        #print(result)
         if result:
             self.found = state
         return result
@@ -1563,6 +1571,7 @@ class InstrumentedProblem(Problem):
         return getattr(self.problem, attr)
 
     def __repr__(self):
+        #print(self.succs)
         return '<{:4d}/{:4d}/{:4d}/{}>'.format(self.succs, self.goal_tests,
                                                self.states, str(self.found)[:4])
 
@@ -1577,6 +1586,7 @@ def compare_searchers(problems, header,
     def do(searcher, problem):
         p = InstrumentedProblem(problem)
         searcher(p)
+        print(p)
         return p
     table = [[name(s)] + [do(s, p) for p in problems] for s in searchers]
     print_table(table, header)
