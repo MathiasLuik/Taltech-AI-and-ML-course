@@ -149,11 +149,16 @@ def mainBrain(inistate, goal):
     #goalnode = search.iterative_deepening_search(problem)
     # sammud (tegevused, käigud) algolekust lõppolekuni
     print(goalnode.solution())
-    print("aa")
-    print(len(goalnode.solution()))
-    print("aa")
-    search.compare_searchers([problem], ["Strateegia", "algolek1"],
-                      searchers=[search.breadth_first_graph_search]) #pakun esimene number tähendab mitmes neuroni ringi. 3 tähendab kokku arvutust
+    print(goalnode.path())
+    #print(len(goalnode.path()))
+    #print("aa")
+    #print(len(goalnode.solution()))
+    #print("aa")
+    #search.compare_searchers([problem], ["Strateegia", "algolek1"],
+                    #  searchers=[search.breadth_first_graph_search]) #pakun esimene number tähendab mitmes neuroni ringi. 3 tähendab kokku arvutust
+    #esimene on self.problem.actions(state)
+    #teine on self.problem.result(state, action)
+    #kolmas on problem.goal_test(state) 
     #Strateegia nimi ning algolek. 
     # olekud algolekust lõppolekuni
     #print(goalnode.path())
