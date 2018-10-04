@@ -15,7 +15,9 @@ import search
    #}
 def readingFile():
     with open("gr17.txt") as f:
+        first_line = f.readline()
         map_data = [l.strip() for l in f.readlines() if len(l)>1]
+        print(first_line)
     return map_data
 
 class TSP(search.Problem):
@@ -42,8 +44,7 @@ class TSP(search.Problem):
         return 1/(self.cost(state)+1)
         
 print(readingFile())
-    
-#problem = TSP(inistate, goal)   
+    #problem = TSP(inistate, goal)   
 #p = search.InstrumentedProblem(TSP("gr48"))
 #g = search.hill_climbing(p)
 #print(g.state)
