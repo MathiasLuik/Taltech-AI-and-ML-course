@@ -32,7 +32,8 @@ class Problem(object):
 
     def __init__(self, initial, goal=None):
         print("I'm in Problem.__init__")
-        """The constructor specifies the initial state, and possibly a goal
+        """The constructor specifies the 
+        state, and possibly a goal
         state, if there is a unique goal. Your subclass's constructor can add
         other arguments."""
         self.initial = initial
@@ -1553,6 +1554,7 @@ class InstrumentedProblem(Problem):
 
     def __getattr__(self, attr):
         return getattr(self.problem, attr)
+        #return getattr(self.problem, attr)
 
     def __repr__(self):
         return '<{:4d}/{:4d}/{:4d}/{}>'.format(self.succs, self.goal_tests,

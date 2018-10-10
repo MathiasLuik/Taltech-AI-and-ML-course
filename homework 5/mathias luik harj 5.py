@@ -13,21 +13,26 @@ import search
    #    3. take route[k+1] to end and add them in order to new_route
     #   return new_route;
    #}
-def readingFile():
-    with open("gr17.txt") as f:
+def readingFile(fileName):
+    with open(fileName) as f:
         first_line = f.readline()
         map_data = [l.strip() for l in f.readlines() if len(l)>1]
-        print(first_line)
-    return map_data
+        #print(first_line)
+    return map_data,first_line
 
 class TSP(search.Problem):
     def __init__(self, instance):
-        print(readingFile())
+        #(mapData,numberOfCities)=readingFile("gr17.txt")
+        #print(mapData)
+        list=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]# 15st saab nulli 
+        #self.instance=instance
+        initial=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+        #ititial=list
         # laadi sisse ülesanne sobival kujul
-        
         # genereeri algolek (võib olla list linnade indeksitest)
-            
+        #return None
     def actions(self, state):
+        #siin ta teeb paare. Järestiku ei saa võtta. kui on indeks 4. siis proovib vähemalt 2 või 6te
         # siin genereerime võimalikud lahti ühendatavate graafi kaarte paarid 2-Opt jaoks
         #siit actionsitest genereeri kohe 16x16 lahendit. 
         return state
@@ -42,13 +47,15 @@ class TSP(search.Problem):
         # kuna valmis otsingufunktsioonid arvavad, et mida suurem väärtus, seda parem, siis meie minimeerimisülesande TSP
         # lahendamiseks tuleb teepikkusest pöördväärtus võtta.
         return 1/(self.cost(state)+1)
-        
-print(readingFile())
+
+
+
+
     #problem = TSP(inistate, goal)   
-#p = search.InstrumentedProblem(TSP("gr48"))
-#g = search.hill_climbing(p)
-#print(g.state)
-#print(p.cost(g.state))
+p = search.InstrumentedProblem(TSP("gr17")) #´ta loeb TSP sisse ja selle peale laob searchi problemi
+g = search.hill_climbing(p)
+print(g.state)
+print(p.cost(g.state))
 
 # kas see tähendab, et 17 listi.
 #kujul [(0,1,2,3,4,5,6,7),(2,3,4,5,6,1,7,0),(4,3,))]
