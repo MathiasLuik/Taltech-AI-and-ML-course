@@ -14,24 +14,31 @@ import search
     #   return new_route;
    #}
 def readingFile(fileName):
-    with open(fileName) as f:
-        first_line = f.readline()
-        map_data = [l.strip() for l in f.readlines() if len(l)>1]
-        #print(first_line)
-    return map_data,first_line
+    dist_matrix=[]
+    with open(fileName, 'r') as filehandle:  
+        numberOfCities=filehandle.readline()
+        next(filehandle)
+        for line in filehandle:
+            liners=[]  
+            line = line.split()
+            #print(line)
+            liners.extend(line)
+            dist_matrix.append(liners)
+    print(numberOfCities)
+    return dist_matrix,numberOfCities
 
 class TSP(search.Problem):
     def __init__(self, instance):
-        #(mapData,numberOfCities)=readingFile("gr17.txt")
-        #print(mapData)
-        list=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]# 15st saab nulli 
-        #self.instance=instance
-        initial=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
-        #ititial=list
-        # laadi sisse ülesanne sobival kujul
-        # genereeri algolek (võib olla list linnade indeksitest)
-        #return None
+        #(dist_matrix,numberOfCities)=readingFile("gr17.txt")
+        list=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]# 15st saab nulli         
+        self.instance=instance
+        self.initial=list
+
+        
     def actions(self, state):
+        print(state)
+        (dist_matrix,numberOfCities)=readingFile("gr17.txt")
+        print(dist_matrix[0][4])
         #siin ta teeb paare. Järestiku ei saa võtta. kui on indeks 4. siis proovib vähemalt 2 või 6te
         # siin genereerime võimalikud lahti ühendatavate graafi kaarte paarid 2-Opt jaoks
         #siit actionsitest genereeri kohe 16x16 lahendit. 
@@ -52,10 +59,10 @@ class TSP(search.Problem):
 
 
     #problem = TSP(inistate, goal)   
-p = search.InstrumentedProblem(TSP("gr17")) #´ta loeb TSP sisse ja selle peale laob searchi problemi
+p = search.InstrumentedProblem(TSP("gr17.txt")) #´ta loeb TSP sisse ja selle peale laob searchi problemi
 g = search.hill_climbing(p)
-print(g.state)
-print(p.cost(g.state))
+#print(g.state)
+#print(p.cost(g.state))
 
 # kas see tähendab, et 17 listi.
 #kujul [(0,1,2,3,4,5,6,7),(2,3,4,5,6,1,7,0),(4,3,))]

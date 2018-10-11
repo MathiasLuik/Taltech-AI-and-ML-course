@@ -108,11 +108,11 @@ class Node:
             self.depth = parent.depth + 1
 
     def __repr__(self):
-        print("I'm in Node.__repr__")
+        #print("I'm in Node.__repr__")
         return "<Node {}>".format(self.state)
 
     def __lt__(self, node):
-        print("I'm in Node.__lt__")
+        #print("I'm in Node.__lt__")
         return self.state < node.state
 
     def expand(self, problem):
@@ -132,12 +132,12 @@ class Node:
         return next_node
     
     def solution(self):
-        print("I'm in Node.solution")
+        #print("I'm in Node.solution")
         """Return the sequence of actions to go from the root to this node."""
         return [node.action for node in self.path()[1:]]
 
     def path(self):
-        print("I'm in Node.path")
+        #print("I'm in Node.path")
         """Return a list of nodes forming the path from the root to this node."""
         node, path_back = self, []
         while node:
@@ -263,19 +263,19 @@ def breadth_first_graph_search(problem):
     print("I'm in breadth_first_graph_search")
     #print(problem)
     node = Node(problem.initial)
-    print("-")
+    #print("-")
     #print(node)
-    print("-")
+    #print("-")
     if problem.goal_test(node.state):
         print("problem.goal_test=state")
         return node
-    print("--")
+    #print("--")
     frontier = deque([node])
-    print(frontier)
+    #print(frontier)
     explored = set()
-    print("---")
+    #print("---")
     while frontier:
-        print("----")
+        #print("----")
         node = frontier.popleft()
         explored.add(node.state)
         #print(frontier)
@@ -283,7 +283,7 @@ def breadth_first_graph_search(problem):
         #print(node)
         for child in node.expand(problem):
             #print(child)
-            print("-----")
+            #print("-----")
             if child.state not in explored and child not in frontier:
                 if problem.goal_test(child.state):
                     return child

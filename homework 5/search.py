@@ -31,16 +31,13 @@ class Problem(object):
     of your subclass and solve them with the various search functions."""
 
     def __init__(self, initial, goal=None):
-        print("I'm in Problem.__init__")
-        """The constructor specifies the 
-        state, and possibly a goal
+        """The constructor specifies the initial state, and possibly a goal
         state, if there is a unique goal. Your subclass's constructor can add
         other arguments."""
         self.initial = initial
         self.goal = goal
 
     def actions(self, state):
-        print("I'm in Problem.actions")
         """Return the actions that can be executed in the given
         state. The result would typically be a list, but if there are
         many actions, consider yielding them one at a time in an
@@ -48,14 +45,12 @@ class Problem(object):
         raise NotImplementedError
 
     def result(self, state, action):
-        print("I'm in Problem.result")
         """Return the state that results from executing the given
         action in the given state. The action must be one of
         self.actions(state)."""
         raise NotImplementedError
 
     def goal_test(self, state):
-        print("I'm in Problem.goal_test")
         """Return True if the state is a goal. The default method compares the
         state to self.goal or checks for state in self.goal if it is a
         list, as specified in the constructor. Override this method if
@@ -71,13 +66,11 @@ class Problem(object):
         is such that the path doesn't matter, this function will only look at
         state2.  If the path does matter, it will consider c and maybe state1
         and action. The default method costs 1 for every step in the path."""
-        print("I'm in Problem.path_cost")
         return c + 1
 
     def value(self, state):
         """For optimization problems, each state has a value.  Hill-climbing
         and related algorithms try to maximize this value."""
-        print("I'm in Problem.value")
         raise NotImplementedError
 # ______________________________________________________________________________
 
@@ -95,7 +88,6 @@ class Node:
 
     def __init__(self, state, parent=None, action=None, path_cost=0):
         """Create a search tree Node, derived from a parent by an action."""
-        print("I'm in Node.__init__")
         self.state = state
         self.parent = parent
         self.action = action
@@ -105,21 +97,17 @@ class Node:
             self.depth = parent.depth + 1
 
     def __repr__(self):
-        print("I'm in Node.__repr__")
         return "<Node {}>".format(self.state)
 
     def __lt__(self, node):
-        print("I'm in Node.__lt__")
         return self.state < node.state
 
     def expand(self, problem):
-        print("I'm in Node.epand")
         """List the nodes reachable in one step from this node."""
         return [self.child_node(problem, action)
                 for action in problem.actions(self.state)]
 
     def child_node(self, problem, action):
-        print("I'm in Node.child_node")
         """[Figure 3.10]"""
         next_state = problem.result(self.state, action)
         next_node = Node(next_state, self, action,
@@ -128,12 +116,10 @@ class Node:
         return next_node
     
     def solution(self):
-        print("I'm in Node.solution")
         """Return the sequence of actions to go from the root to this node."""
         return [node.action for node in self.path()[1:]]
 
     def path(self):
-        print("I'm in Node.path")
         """Return a list of nodes forming the path from the root to this node."""
         node, path_back = self, []
         while node:
@@ -147,11 +133,9 @@ class Node:
     # want in other contexts.]
 
     def __eq__(self, other):
-        print("I'm in Node.__eq__")
         return isinstance(other, Node) and self.state == other.state
 
     def __hash__(self):
-        print("I'm in Node.__hash__")
         return hash(self.state)
 
 # ______________________________________________________________________________
@@ -234,7 +218,6 @@ def depth_first_graph_search(problem):
         The argument frontier should be an empty queue.
         Does not get trapped by loops.
         If two paths reach a state, only use the first one. [Figure 3.7]"""
-    
     frontier = [(Node(problem.initial))]  # Stack
     explored = set()
     while frontier:
@@ -247,29 +230,22 @@ def depth_first_graph_search(problem):
                         child not in frontier)
     return None
 
-########################################
+
 def breadth_first_graph_search(problem):
     """[Figure 3.11]
     Note that this function can be implemented in a
     single line as below:
     return graph_search(problem, FIFOQueue())
     """
-    print("I'm in breadth_first_graph_search")
-    #print(problem)
     node = Node(problem.initial)
-    print("-")
-    print(node)
     if problem.goal_test(node.state):
         return node
     frontier = deque([node])
     explored = set()
-    print("--")
     while frontier:
-        print("---")
         node = frontier.popleft()
         explored.add(node.state)
         for child in node.expand(problem):
-            print("----")
             if child.state not in explored and child not in frontier:
                 if problem.goal_test(child.state):
                     return child
@@ -1554,7 +1530,6 @@ class InstrumentedProblem(Problem):
 
     def __getattr__(self, attr):
         return getattr(self.problem, attr)
-        #return getattr(self.problem, attr)
 
     def __repr__(self):
         return '<{:4d}/{:4d}/{:4d}/{}>'.format(self.succs, self.goal_tests,

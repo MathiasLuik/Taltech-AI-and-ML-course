@@ -219,7 +219,7 @@ def path_constructor(map):
     pathAstar=path_reverse(came_from_A,start,finish,map)
     #path
     #print(path)
--path_constructor(readingFile())
+path_constructor(readingFile())
 #path_constructor(lava_map2)
 #path_constructor(lava_map2)
     

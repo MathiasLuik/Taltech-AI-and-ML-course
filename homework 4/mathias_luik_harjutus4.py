@@ -56,10 +56,10 @@ class EightPuzzle(search.Problem):
 def actionList(state,numberInState):
     #print(state)
     
-    numberOfStates=howManyEmptyElementhasMoves(state,numberInState)
-    states=generatingListofTuplesForAction(state,numberInState,numberOfStates)
+    #numberOfStates=howManyEmptyElementhasMoves(state,numberInState)
+    #states=generatingListofTuplesForAction(state,numberInState,numberOfStates)
     #print(states)
-
+    states=generatingListofTuplesForAction(state,numberInState)
     #(x, y) = location
     #results = [(x + 1, y), (x, y - 1), (x - 1, y), (x, y + 1)]
     return states
@@ -80,11 +80,10 @@ def replace_at_index(state, index, value):
     replaceList[index]=value
     return tuple(replaceList)
 
-def generatingListofTuplesForAction(state,numberInState,numberOfStates):
+def generatingListofTuplesForAction(state,numberInState):
     #print("Starts---")
     results=[]
-    #(one,two,three,four,five,six,seven,eigth,nine)=state
-    
+    #(one,two,three,four,five,six,seven,eigth,nine)=state    
     if numberInState<6:
         number=state[numberInState+3]
         movingZero=replace_at_index(state,numberInState+3,0)
@@ -94,8 +93,7 @@ def generatingListofTuplesForAction(state,numberInState,numberOfStates):
         number=state[numberInState-3]
         movingZero=replace_at_index(state,numberInState-3,0)
         movingNumber=replace_at_index(movingZero,numberInState,number)
-        results.append(movingNumber)
-    
+        results.append(movingNumber)    
     if numberInState%3>0:
         number=state[numberInState-1]
         movingZero=replace_at_index(state,numberInState-1,0)
@@ -105,12 +103,7 @@ def generatingListofTuplesForAction(state,numberInState,numberOfStates):
         number=state[numberInState+1]
         movingZero=replace_at_index(state,numberInState+1,0)
         movingNumber=replace_at_index(movingZero,numberInState,number)
-        results.append(movingNumber)
-    
-    
-    
-    
-    
+        results.append(movingNumber)    
     #print(results)
     return results
 #igale indeksile on defineeritud action
@@ -137,12 +130,13 @@ def find_location(state):
 inistate = (1,2,3,7,0,5,8,4,6)
 #inistate = (0,2,3,7,1,5,8,4,6)            
 goal =      (1,2,3,4,5,6,7,8,0) 
+
 def mainBrain(inistate, goal):
     #location=find_location(inistate)
     #print(location)
     problem = EightPuzzle(inistate, goal)
     #print(problem[inistate])
-    print("---")
+    #print("---")
     #goalnode = search.breadth_first_graph_search(problem)
     goalnode = search.breadth_first_graph_search(problem)
     #goalnode = search.depth_first_graph_search(problem)
@@ -154,8 +148,9 @@ def mainBrain(inistate, goal):
     #print("aa")
     #print(len(goalnode.solution()))
     #print("aa")
-    #search.compare_searchers([problem], ["Strateegia", "algolek1"],
-                    #  searchers=[search.breadth_first_graph_search]) #pakun esimene number tähendab mitmes neuroni ringi. 3 tähendab kokku arvutust
+    print("----------------------")
+    search.compare_searchers([problem], ["Strategy", "firstState"],
+                      searchers=[search.breadth_first_graph_search]) #pakun esimene number tähendab mitmes neuroni ringi. 3 tähendab kokku arvutust
     #esimene on self.problem.actions(state)
     #teine on self.problem.result(state, action)
     #kolmas on problem.goal_test(state) 
