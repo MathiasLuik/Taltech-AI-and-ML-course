@@ -1,5 +1,5 @@
 import search
-
+import random
 from sys import argv
 from math import hypot
 from timeit import default_timer
@@ -27,7 +27,7 @@ def optSwap(route,i,k):
     new_route.extend(reversed(route[i:k + 1]))
     new_route.extend(route[k+1:])
     assert len(new_route) == len(route)
-    print(new_route)
+    #print(new_route)
     return new_route
     
 
@@ -47,19 +47,24 @@ def readingFile(fileName):
             dist_matrix.append(liners)
             
     #print(numberOfCities)
-    print(dist_matrix)
-    print("--------------")
+    #print(dist_matrix)
+    #print("--------------")
     return dist_matrix#,numberOfCities
-
+dist_matrix=readingFile("gr17.txt")
+#print(dist_matrix)
 class TSP(search.Problem):
     def __init__(self, instance):
+        
         #(dist_matrix,numberOfCities)=readingFile("gr17.txt")
         list=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]# 15st saab nulli         
         self.instance=instance
         self.initial=list        
     def actions(self, state):
         #print(state)
-        dist_matrix=readingFile("gr17.txt")
+        #dist_matrix=readingFile("gr17.txt")
+        #pairs = random.sample(range(17), 2)
+        pairs = [random.sample(range(17), 2) for x in range(17)]
+        #print(pairs)
         #print(dist_matrix)
         #print(len(dist_matrix[0]))
         #print(dist_matrix)
@@ -67,11 +72,20 @@ class TSP(search.Problem):
         #siin ta teeb paare. Järestiku ei saa võtta. kui on indeks 4. siis proovib vähemalt 2 või 6te
         # siin genereerime võimalikud lahti ühendatavate graafi kaarte paarid 2-Opt jaoks
         #siit actionsitest genereeri kohe 16x16 lahendit. 
-        return dist_matrix
+        return pairs
+        #return dist_matrix
     def result(self, state, action):
         
+        
+        action.sort()
         #print(action)
+        #sorted.action
         #print(action)
+        i=action[0]
+        j=action[1]
+        
+        #print(state)
+        
         #route=action
         #i=state[0]
         #k=action[1]
@@ -79,7 +93,9 @@ class TSP(search.Problem):
         #print(i)
         #print(k)
         #i vahetab kohad j vastu
-        optSwap(action,i,j)
+        newState=optSwap(state,i,j)
+        #self.state=state
+        #print(optSwap(state,i,j))
         #print(optSwap)
         #print(state)
         #i=state[0]
@@ -92,20 +108,38 @@ class TSP(search.Problem):
         #print(state[0])
         # siin tekitame uue oleku, kus mingid kaared lahti ühendatakse ja teistpidi kokku ühendatakse, kasutades ülalolevat pseudokoodi.
         # action on üks i, j paar.
-        return optSwap
+        
+        return newState
     def cost(self, state):
+        print("Here is the state")
+        print(state)
+        for x in state[:]:
+            #print(dist_matrix[x])
+            
+            #print(dist_matrix[x%16][state[(x+1)]%16])
+            print(dist_matrix[x%16][(x+1)%16])
+        #[cities[tour[i % 16]][0] for i in range(17)], [cities[tour[i % 16]][1] for i in range(17)]
+        #print(dist_matrix)        
+        routeDistance=state
+        
+        #print(routeDistance)
+        #print(state)
+        #print(state)
         # arvuta (või leia muul viisil) praeguse marsruudi kogupikkus. Ära unusta, et marsruut on suletud.
         return 1
     def value(self, state):
         # kuna valmis otsingufunktsioonid arvavad, et mida suurem väärtus, seda parem, siis meie minimeerimisülesande TSP
         # lahendamiseks tuleb teepikkusest pöördväärtus võtta.
+        #print(state)
         return 1/(self.cost(state)+1)
-
+        
+        #if math.exp( ( oldDistances - newDistances) / temperature) > random.random():
+        #tour = copy.copy(newTour);
     #problem = TSP(inistate, goal)   
 p = search.InstrumentedProblem(TSP("gr17.txt")) #´ta loeb TSP sisse ja selle peale laob searchi problemi
 g = search.hill_climbing(p)
-#print(g.state)
-#print(p.cost(g.state))
+print(g)
+print(p.cost(g))
 
 # kas see tähendab, et 17 listi.
 #kujul [(0,1,2,3,4,5,6,7),(2,3,4,5,6,1,7,0),(4,3,))]
