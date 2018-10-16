@@ -3,15 +3,17 @@ import search
 #sama ruudu peal ei saa mitu sÃµjameest olla
 #otsing isegi ei pruugi parima efektiivsusega
 import games
-
+map=[0,1,2,3,4,5,6,7,8]
+playingGame=["*","*","*",3,0,5,6,7,8]
 class BearGame(games.Game):                                                     
     def __init__(self):
         # algseis jne initsialiseerimine
-        initial=[(0,2)]
+        5initial=map
+        
         return initial
     def to_move(self, state):
         # otsusta, kuidas karu ja jahimeeste poolt tähistada ja tagasta, kumb pool käigul on
-        return 1
+        return (1,2)
     def actions(self, state):
         # kõik seisus võimalikud käigud
         return 1                                                                        
