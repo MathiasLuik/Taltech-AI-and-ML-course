@@ -174,6 +174,7 @@ def alphabeta_cutoff_search(state, game, d=4, cutoff_test=None, eval_fn=None):
 
 
 def query_player(game, state):
+    print("I'm in query_player, your turn")
     """Make a move by querying standard input."""
     print("current state:")
     game.display(state)
@@ -192,6 +193,7 @@ def query_player(game, state):
 
 
 def random_player(game, state):
+    print("I'm in random_player")
     """A player that chooses a legal move at random."""
     return random.choice(game.actions(state)) if game.actions(state) else None
 
@@ -216,33 +218,41 @@ class Game:
     be done in the constructor."""
 
     def actions(self, state):
+        print("I'm in Game.actions")
         """Return a list of the allowable moves at this point."""
         raise NotImplementedError
 
     def result(self, state, move):
+        print("I'm in Game.result")
         """Return the state that results from making a move from a state."""
         raise NotImplementedError
 
     def utility(self, state, player):
+        print("I'm in Game.utility")
         """Return the value of this final state to player."""
         raise NotImplementedError
 
     def terminal_test(self, state):
+        print("I'm in Game.terminal_test")
         """Return True if this is a final state for the game."""
         return not self.actions(state)
 
     def to_move(self, state):
+        print("I'm in Game.to_move")
         """Return the player whose move it is in this state."""
         return state.to_move
 
     def display(self, state):
+        print("I'm in Game.display")
         """Print or otherwise display the state."""
         print(state)
 
     def __repr__(self):
+        print("I'm in Game.__repr__")
         return '<{}>'.format(self.__class__.__name__)
 
     def play_game(self, *players):
+        print("I'm in Game.play_game")
         """Play an n-person, move-alternating game."""
         state = self.initial
         while True:
