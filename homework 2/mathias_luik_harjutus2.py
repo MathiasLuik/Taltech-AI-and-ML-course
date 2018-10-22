@@ -88,7 +88,7 @@ def findingPair(map,start,finish):
                 #print(map[1])
                 #print(map[0][1])
                 #print(map[0][30])     
-                #print(map[next[0]][next[1]])         
+                #print(map[next[0]][next[1]])               
                 frontier.put(next)  
                 came_from[next] = current          
     #print(came_from)

@@ -1,4 +1,3 @@
-"""Games, or Adversarial Search (Chapter 5)"""
 
 from collections import namedtuple
 import random
@@ -196,12 +195,12 @@ def random_player(game, state):
     print("I'm in random_player")
     """A player that chooses a legal move at random."""
     #print(state)
-    newState=[]
-    for x in state:
-        if x!="X":
-            newState.append(x)
-    print("I'm in random_player.game.actions(state)")    
-    print(game.actions(state))
+    #newState=[]
+    #for x in state:
+      #  if x!="X":
+     #       newState.append(x)
+    #print("I'm in random_player.game.actions(state)")    
+    #print(game.actions(state))
     return random.choice(game.actions(state)) if game.actions(state) else None
     #return random.choice(game.actions(state)) if game.actions(state) else None
 
@@ -253,7 +252,7 @@ class Game:
     def display(self, state):
         print("I'm in Game.display")
         """Print or otherwise display the state."""
-        print(state)
+        #print(state)
 
     def __repr__(self):
         print("I'm in Game.__repr__")
@@ -265,6 +264,8 @@ class Game:
         state = self.initial
         while True:
             for player in players:
+                #to_move=self.player
+                #player = state.to_move
                 move = player(self, state)
                 state = self.result(state, move)
                 if self.terminal_test(state):
