@@ -251,6 +251,7 @@ class Game:
 
     def display(self, state):
         print("I'm in Game.display")
+        print(state)
         """Print or otherwise display the state."""
         #print(state)
 
@@ -263,10 +264,23 @@ class Game:
         """Play an n-person, move-alternating game."""
         state = self.initial
         while True:
+            #whichPlayer=0
+            
             for player in players:
+                """
+                playerSide=""
+                whichPlayer+=1
+                if whichPlayer%2==1:
+                    playerSide="attacker"
+                else:
+                    playerSide="bear"
+                print("ohho siin on player")
+                print()
+                """
                 #to_move=self.player
                 #player = state.to_move
                 move = player(self, state)
+                print(move)
                 state = self.result(state, move)
                 if self.terminal_test(state):
                     self.display(state)
