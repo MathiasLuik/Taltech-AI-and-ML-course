@@ -172,15 +172,17 @@ def alphabeta_cutoff_search(state, game, d=4, cutoff_test=None, eval_fn=None):
 # Players for Games
 
 
-def query_player(game, state):
+def query_player(game, state, playerTurn):
     print("I'm in query_player, your turn")
     """Make a move by querying standard input."""
     print("current state:")
     game.display(state)
-    print("available moves: {}".format(game.actions(state)))
+    print("available moves: {}".format(game.actions(state, playerTurn)))
     print("")
+    #whoseTurn=state.to_move
+    #print(whoseTurn)
     move = None
-    if game.actions(state):
+    if game.actions(state, playerTurn):
         move_string = input('Your move? ')
         try:
             move = eval(move_string)
@@ -191,7 +193,7 @@ def query_player(game, state):
     return move
 
 
-def random_player(game, state):
+def random_player(game, state, playerTurn):
     print("I'm in random_player")
     """A player that chooses a legal move at random."""
     #print(state)
@@ -234,15 +236,16 @@ class Game:
         """Return the state that results from making a move from a state."""
         raise NotImplementedError
 
-    def utility(self, state, player):
+    def utility(self, state, playerTurn):
         print("I'm in Game.utility")
         """Return the value of this final state to player."""
-        raise NotImplementedError
+        #raise NotImplementedError
+        return self.utility(state, playerTurn)
 
-    def terminal_test(self, state):
+    def terminal_test(self, state,playerTurn):
         print("I'm in Game.terminal_test")
         """Return True if this is a final state for the game."""
-        return not self.actions(state)
+        return not self.actions(state, playerTurn)
 
     def to_move(self, state):
         print("I'm in Game.to_move")
@@ -250,8 +253,8 @@ class Game:
         return state.to_move
 
     def display(self, state):
-        print("I'm in Game.display")
-        print(state)
+        #print("I'm in Game.display")
+        #print(state)
         """Print or otherwise display the state."""
         #print(state)
 
@@ -263,10 +266,23 @@ class Game:
         print("I'm in Game.play_game")
         """Play an n-person, move-alternating game."""
         state = self.initial
+        #playerTurn=self.startingPlayer
+        print(self.toho)
+        #print(players[0].__name__)
+        #print(players[1].__name__)
         while True:
-            #whichPlayer=0
-            
+            playerCount=0
             for player in players:
+                if playerCount%2==0:
+                    playerTurn="*"
+                else:
+                    playerTurn="x"    
+                playerCount+=1
+                #print(player.__name__)
+                #if players[0].__name__!=None:
+                #    playerTurn="*"
+               
+                #print(playerTurn)
                 """
                 playerSide=""
                 whichPlayer+=1
@@ -279,12 +295,16 @@ class Game:
                 """
                 #to_move=self.player
                 #player = state.to_move
-                move = player(self, state)
-                print(move)
+                #move = player(self, state)
+                #state = self.result(state, move)
+                move = player(self, state, playerTurn)
+                #print("move")
+                #print(move)
                 state = self.result(state, move)
-                if self.terminal_test(state):
+                if self.terminal_test(state,playerTurn):
                     self.display(state)
-                    return self.utility(state, self.to_move(self.initial))
+                    return self.utility(state, playerTurn)
+                    #return self.utility(state, self.to_move(self.initial))
 
 class StochasticGame(Game):
     """A stochastic game includes uncertain events which influence
@@ -381,7 +401,7 @@ class TicTacToe(Game):
         self.v = v
         self.k = k
         moves = [(x, y) for x in range(1, h + 1)
-                 for y in range(1, v + 1)]
+                for y in range(1, v + 1)]
         self.initial = GameState(to_move='X', utility=0, board={}, moves=moves)
 
     def actions(self, state):

@@ -27,13 +27,14 @@ def readingFile(fileName):
 class TSP(search.Problem):
     def __init__(self, instance):
         value =int(re.search(r'\d+', instance).group())
-        list=[]
+        listt=[]
         for x in range(value):
-            list.append(x)
+            listt.append(x)
+        random.shuffle(listt)
         self.instance=instance
-        self.initial=list        
+        self.initial=listt        
     def actions(self, state):
-        optimizeCount=1000
+        optimizeCount=5000
         pairs = [random.sample(range(len(state)), 2) for x in range(optimizeCount)]      
         return pairs
     def result(self, state, action):    
@@ -56,5 +57,5 @@ dist_matrix=readingFile("gr48.txt")
 p = search.InstrumentedProblem(TSP("gr48.txt")) #pead ülevalt ka vahetama
 
 g = search.hill_climbing(p)
-print(g)
+print(g) #here is the list in order
 print(p.cost(g))
