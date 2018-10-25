@@ -80,7 +80,7 @@ def expectiminimax(state, game):
                   key=lambda a: chance_node(state, a), default=None)
 
 
-def alphabeta_search(state, game):
+def alphabeta_search(state, game, playerTurn):
     """Search game to determine best action; use alpha-beta pruning.
     As in [Figure 5.7], this version searches all the way to the leaves."""
 
@@ -121,7 +121,7 @@ def alphabeta_search(state, game):
     return best_action
 
 
-def alphabeta_cutoff_search(state, game, d=4, cutoff_test=None, eval_fn=None):
+def alphabeta_cutoff_search(state, playerTurn, game, d=4, cutoff_test=None, eval_fn=None):
     """Search game to determine best action; use alpha-beta pruning.
     This version cuts off search and uses an evaluation function."""
 
@@ -132,7 +132,7 @@ def alphabeta_cutoff_search(state, game, d=4, cutoff_test=None, eval_fn=None):
         if cutoff_test(state, depth):
             return eval_fn(state)
         v = -infinity
-        for a in game.actions(state):
+        for a in game.actions(state, playerTurn):
             v = max(v, min_value(game.result(state, a),
                                  alpha, beta, depth + 1))
             if v >= beta:
@@ -144,7 +144,7 @@ def alphabeta_cutoff_search(state, game, d=4, cutoff_test=None, eval_fn=None):
         if cutoff_test(state, depth):
             return eval_fn(state)
         v = infinity
-        for a in game.actions(state):
+        for a in game.actions(state, playerTurn):
             v = min(v, max_value(game.result(state, a),
                                  alpha, beta, depth + 1))
             if v <= alpha:
@@ -156,12 +156,12 @@ def alphabeta_cutoff_search(state, game, d=4, cutoff_test=None, eval_fn=None):
     # The default test cuts off at depth d or at a terminal state
     cutoff_test = (cutoff_test or
                    (lambda state, depth: depth > d or
-                    game.terminal_test(state)))
+                    game.terminal_test(state, playerTurn)))
     eval_fn = eval_fn or (lambda state: game.utility(state, player))
     best_score = -infinity
     beta = infinity
     best_action = None
-    for a in game.actions(state):
+    for a in game.actions(state, playerTurn):
         v = min_value(game.result(state, a), best_score, beta, 1)
         if v > best_score:
             best_score = v
@@ -203,7 +203,7 @@ def random_player(game, state, playerTurn):
      #       newState.append(x)
     #print("I'm in random_player.game.actions(state)")    
     #print(game.actions(state))
-    return random.choice(game.actions(state)) if game.actions(state) else None
+    return random.choice(game.actions(state,playerTurn)) if game.actions(state,playerTurn) else None
     #return random.choice(game.actions(state)) if game.actions(state) else None
 
 def alphabeta_player(game, state):
