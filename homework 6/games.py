@@ -85,13 +85,14 @@ def alphabeta_search(state, game, playerTurn):
     As in [Figure 5.7], this version searches all the way to the leaves."""
 
     player = game.to_move(state)
-
+    
     # Functions used by alphabeta
     def max_value(state, alpha, beta):
         if game.terminal_test(state):
             return game.utility(state, player)
         v = -infinity
         for a in game.actions(state):
+            print("I'm in max.value")
             v = max(v, min_value(game.result(state, a), alpha, beta))
             if v >= beta:
                 return v
@@ -103,6 +104,7 @@ def alphabeta_search(state, game, playerTurn):
             return game.utility(state, player)
         v = infinity
         for a in game.actions(state):
+            print("I'm in max.value")
             v = min(v, max_value(game.result(state, a), alpha, beta))
             if v <= alpha:
                 return v
@@ -114,6 +116,7 @@ def alphabeta_search(state, game, playerTurn):
     beta = infinity
     best_action = None
     for a in game.actions(state):
+        print("Im in actions place for bot")
         v = min_value(game.result(state, a), best_score, beta)
         if v > best_score:
             best_score = v
@@ -126,14 +129,21 @@ def alphabeta_cutoff_search(state, playerTurn, game, d=4, cutoff_test=None, eval
     This version cuts off search and uses an evaluation function."""
 
     player = game.to_move(state)
+    #player = '*'
 
     # Functions used by alphabeta
     def max_value(state, alpha, beta, depth):
+        print("I'm in max.value")
         if cutoff_test(state, depth):
             return eval_fn(state)
         v = -infinity
-        for a in game.actions(state, playerTurn):
-            v = max(v, min_value(game.result(state, a),
+        print(state)
+        print(game.actions(state, playerTurn))
+        for b in game.actions(state, playerTurn):
+            print("I'm in max.value b actions")
+            print(state)
+            print(b)
+            v = max(v, min_value(game.result(state, b),
                                  alpha, beta, depth + 1))
             if v >= beta:
                 return v
@@ -145,6 +155,7 @@ def alphabeta_cutoff_search(state, playerTurn, game, d=4, cutoff_test=None, eval
             return eval_fn(state)
         v = infinity
         for a in game.actions(state, playerTurn):
+            #print("I'm in min.value")
             v = min(v, max_value(game.result(state, a),
                                  alpha, beta, depth + 1))
             if v <= alpha:
@@ -162,6 +173,7 @@ def alphabeta_cutoff_search(state, playerTurn, game, d=4, cutoff_test=None, eval
     beta = infinity
     best_action = None
     for a in game.actions(state, playerTurn):
+        print("Im in actions place for bot")
         v = min_value(game.result(state, a), best_score, beta, 1)
         if v > best_score:
             best_score = v
@@ -226,15 +238,17 @@ class Game:
     need to set the .initial attribute to the initial state; this can
     be done in the constructor."""
 
-    def actions(self, state):
+    def actions(self, state, playerTurn):
         print("I'm in Game.actions")
         """Return a list of the allowable moves at this point."""
-        raise NotImplementedError
+        #raise NotImplementedError
+        return self.actions(state, playerTurn)
 
-    def result(self, state, move):
+    def result(self, state, playerTurn):
         print("I'm in Game.result")
         """Return the state that results from making a move from a state."""
-        raise NotImplementedError
+        #raise NotImplementedError
+        return self.result(state,playerTurn)
 
     def utility(self, state, playerTurn):
         print("I'm in Game.utility")
@@ -244,8 +258,11 @@ class Game:
 
     def terminal_test(self, state,playerTurn):
         print("I'm in Game.terminal_test")
+        print(state)
         """Return True if this is a final state for the game."""
-        return not self.actions(state, playerTurn)
+        #return not self.actions(state, playerTurn)
+        return self.terminal_test(state, playerTurn)
+        #return self.terminal_test(state, "*")
 
     def to_move(self, state):
         print("I'm in Game.to_move")
