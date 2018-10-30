@@ -4,7 +4,7 @@ emptyMap=['A1','A2','A3','B1','B2','B3','C1','C2','C3']
 def findOpponentSymbol(playerTurn):
     if playerTurn=='*':
         return 'x'
-    elif playerTurn=='*':
+    elif playerTurn=='x':
         return '*'
     else:
         return 'Something fucked'
@@ -38,10 +38,19 @@ class BearGame(games.Game):
         self.toho="oo"
         #self.to_move=["x"]
         #self.to_move='x'
-    def to_move(self, state):
+    def to_move(self, state,playerTurn):
+        
+        #if 
         #print(print(players[0].__name_
         # otsusta, kuidas karu ja jahimeeste poolt tähistada ja tagasta, kumb pool käigul on
+        
         print("BearGame.to_move")
+        if playerTurn=='*':
+            return '*'
+        elif playerTurn=='x':
+            return 'x'
+        else:
+            return 'Something fucked'
         #print(state)
         #self.side='*'
         #self.side="karu"
@@ -55,7 +64,7 @@ class BearGame(games.Game):
     def result(self, state, action):
         #print(move)
         print("BearGame.result")
-        #print(state)
+        print(state)
         #print(action) #['B2', 'C2']#['A1', 'B1']['B3', 'A3']['B2', 'C2']['C3', 'C2']['C2', 'C1']
         newState=state
         #print(action)

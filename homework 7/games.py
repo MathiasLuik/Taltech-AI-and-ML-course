@@ -1,3 +1,4 @@
+"""Games, or Adversarial Search (Chapter 5)"""
 
 from collections import namedtuple
 import random
@@ -80,19 +81,18 @@ def expectiminimax(state, game):
                   key=lambda a: chance_node(state, a), default=None)
 
 
-def alphabeta_search(state, game, playerTurn):
+def alphabeta_search(state, game):
     """Search game to determine best action; use alpha-beta pruning.
     As in [Figure 5.7], this version searches all the way to the leaves."""
 
     player = game.to_move(state)
-    
+
     # Functions used by alphabeta
     def max_value(state, alpha, beta):
         if game.terminal_test(state):
             return game.utility(state, player)
         v = -infinity
         for a in game.actions(state):
-            print("I'm in max.value1")
             v = max(v, min_value(game.result(state, a), alpha, beta))
             if v >= beta:
                 return v
@@ -104,7 +104,6 @@ def alphabeta_search(state, game, playerTurn):
             return game.utility(state, player)
         v = infinity
         for a in game.actions(state):
-            print("I'm in min.value1")
             v = min(v, max_value(game.result(state, a), alpha, beta))
             if v <= alpha:
                 return v
@@ -116,7 +115,6 @@ def alphabeta_search(state, game, playerTurn):
     beta = infinity
     best_action = None
     for a in game.actions(state):
-        print("Im in actions place for bot")
         v = min_value(game.result(state, a), best_score, beta)
         if v > best_score:
             best_score = v
@@ -124,42 +122,30 @@ def alphabeta_search(state, game, playerTurn):
     return best_action
 
 
-def alphabeta_cutoff_search(state, playerTurn, game, d=4, cutoff_test=None, eval_fn=None):
+def alphabeta_cutoff_search(state, game, d=4, cutoff_test=None, eval_fn=None):
     """Search game to determine best action; use alpha-beta pruning.
     This version cuts off search and uses an evaluation function."""
 
-    player = game.to_move(state,playerTurn)
-    #player = '*'
+    player = game.to_move(state)
 
     # Functions used by alphabeta
     def max_value(state, alpha, beta, depth):
-        print("---------")
-        print("I'm in max.value")
         if cutoff_test(state, depth):
             return eval_fn(state)
         v = -infinity
-        print(state)
-        print(game.actions(state, playerTurn))
-        for b in game.actions(state, playerTurn):
-            print("I'm in max.value b actions")
-            print(depth)
-            print(state)
-            print(b)
-            v = max(v, min_value(game.result(state, b),
+        for a in game.actions(state):
+            v = max(v, min_value(game.result(state, a),
                                  alpha, beta, depth + 1))
-            print(v)
             if v >= beta:
                 return v
             alpha = max(alpha, v)
-        print("---------")
         return v
 
     def min_value(state, alpha, beta, depth):
         if cutoff_test(state, depth):
             return eval_fn(state)
         v = infinity
-        for a in game.actions(state, playerTurn):
-            print("I'm in min.value")
+        for a in game.actions(state):
             v = min(v, max_value(game.result(state, a),
                                  alpha, beta, depth + 1))
             if v <= alpha:
@@ -171,13 +157,12 @@ def alphabeta_cutoff_search(state, playerTurn, game, d=4, cutoff_test=None, eval
     # The default test cuts off at depth d or at a terminal state
     cutoff_test = (cutoff_test or
                    (lambda state, depth: depth > d or
-                    game.terminal_test(state, playerTurn)))
+                    game.terminal_test(state)))
     eval_fn = eval_fn or (lambda state: game.utility(state, player))
     best_score = -infinity
     beta = infinity
     best_action = None
-    for a in game.actions(state, playerTurn):
-        print("Im in actions place for bot")
+    for a in game.actions(state):
         v = min_value(game.result(state, a), best_score, beta, 1)
         if v > best_score:
             best_score = v
@@ -188,17 +173,14 @@ def alphabeta_cutoff_search(state, playerTurn, game, d=4, cutoff_test=None, eval
 # Players for Games
 
 
-def query_player(game, state, playerTurn):
-    print("I'm in query_player, your turn")
+def query_player(game, state):
     """Make a move by querying standard input."""
     print("current state:")
     game.display(state)
-    print("available moves: {}".format(game.actions(state, playerTurn)))
+    print("available moves: {}".format(game.actions(state)))
     print("")
-    #whoseTurn=state.to_move
-    #print(whoseTurn)
     move = None
-    if game.actions(state, playerTurn):
+    if game.actions(state):
         move_string = input('Your move? ')
         try:
             move = eval(move_string)
@@ -209,18 +191,9 @@ def query_player(game, state, playerTurn):
     return move
 
 
-def random_player(game, state, playerTurn):
-    print("I'm in random_player")
+def random_player(game, state):
     """A player that chooses a legal move at random."""
-    #print(state)
-    #newState=[]
-    #for x in state:
-      #  if x!="X":
-     #       newState.append(x)
-    #print("I'm in random_player.game.actions(state)")    
-    #print(game.actions(state))
-    return random.choice(game.actions(state,playerTurn)) if game.actions(state,playerTurn) else None
-    #return random.choice(game.actions(state)) if game.actions(state) else None
+    return random.choice(game.actions(state)) if game.actions(state) else None
 
 def alphabeta_player(game, state):
     return alphabeta_search(state, game)
@@ -242,92 +215,43 @@ class Game:
     need to set the .initial attribute to the initial state; this can
     be done in the constructor."""
 
-    def actions(self, state, playerTurn):
-        print("I'm in Game.actions")
+    def actions(self, state):
         """Return a list of the allowable moves at this point."""
-        #raise NotImplementedError
-        ##return self.actions(state, playerTurn)
-        return self.actions(state, playerTurn)
+        raise NotImplementedError
 
-    def result(self, state, playerTurn):
-        print("I'm in Game.result")
+    def result(self, state, move):
         """Return the state that results from making a move from a state."""
-        #raise NotImplementedError
-        return self.result(state,playerTurn)
-    #result(state,playerTurn)
+        raise NotImplementedError
 
-    def utility(self, state, playerTurn):
-        print("I'm in Game.utility")
+    def utility(self, state, player):
         """Return the value of this final state to player."""
-        #raise NotImplementedError
-        return self.utility(state, playerTurn)
+        raise NotImplementedError
 
-    def terminal_test(self, state,playerTurn):
-        print("I'm in Game.terminal_test")
-        print(state)
+    def terminal_test(self, state):
         """Return True if this is a final state for the game."""
-        #return not self.actions(state, playerTurn)
-        return self.terminal_test(state, playerTurn)
-        #return self.terminal_test(state, "*")
+        return not self.actions(state)
 
-    def to_move(self, state,playerTurn):
-        print("I'm in Game.to_move")
+    def to_move(self, state):
         """Return the player whose move it is in this state."""
         return state.to_move
 
     def display(self, state):
-        #print("I'm in Game.display")
-        #print(state)
         """Print or otherwise display the state."""
-        #print(state)
+        print(state)
 
     def __repr__(self):
-        print("I'm in Game.__repr__")
         return '<{}>'.format(self.__class__.__name__)
 
     def play_game(self, *players):
-        print("I'm in Game.play_game")
         """Play an n-person, move-alternating game."""
         state = self.initial
-        #playerTurn=self.startingPlayer
-        print(self.toho)
-        #print(players[0].__name__)
-        #print(players[1].__name__)
         while True:
-            playerCount=0
             for player in players:
-                if playerCount%2==0:
-                    playerTurn="*"
-                else:
-                    playerTurn="x"    
-                playerCount+=1
-                #print(player.__name__)
-                #if players[0].__name__!=None:
-                #    playerTurn="*"
-               
-                #print(playerTurn)
-                """
-                playerSide=""
-                whichPlayer+=1
-                if whichPlayer%2==1:
-                    playerSide="attacker"
-                else:
-                    playerSide="bear"
-                print("ohho siin on player")
-                print()
-                """
-                #to_move=self.player
-                #player = state.to_move
-                #move = player(self, state)
-                #state = self.result(state, move)
-                move = player(self, state, playerTurn)
-                #print("move")
-                #print(move)
+                move = player(self, state)
                 state = self.result(state, move)
-                if self.terminal_test(state,playerTurn):
+                if self.terminal_test(state):
                     self.display(state)
-                    return self.utility(state, playerTurn)
-                    #return self.utility(state, self.to_move(self.initial))
+                    return self.utility(state, self.to_move(self.initial))
 
 class StochasticGame(Game):
     """A stochastic game includes uncertain events which influence
@@ -424,7 +348,7 @@ class TicTacToe(Game):
         self.v = v
         self.k = k
         moves = [(x, y) for x in range(1, h + 1)
-                for y in range(1, v + 1)]
+                 for y in range(1, v + 1)]
         self.initial = GameState(to_move='X', utility=0, board={}, moves=moves)
 
     def actions(self, state):
