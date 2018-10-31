@@ -41,21 +41,6 @@ def pl_true(exp, model={}):
     op, args = exp.op, exp.args
     if is_prop_symbol(op):
         return model.get(exp)
-    elif op == '~':
-        p = pl_true(args[0], model)
-        if p is None:
-            return None
-        else:
-            return not p
-    elif op == '|':
-        result = False
-        for arg in args:
-            p = pl_true(arg, model)
-            if p is True:
-                return True
-            if p is None:
-                result = None
-        return result
     elif op == '&':
         result = True
         for arg in args:
@@ -68,18 +53,13 @@ def pl_true(exp, model={}):
     p, q = args
     if op == '==>':
         return pl_true(~p | q, model)
-    elif op == '<==':
-        return pl_true(p | ~q, model)
     pt = pl_true(p, model)
     if pt is None:
         return None
     qt = pl_true(q, model)
     if qt is None:
         return None
-    if op == '<=>':
-        return pt == qt
-    elif op == '^':  # xor or 'not equivalent'
-        return pt != qt
+
     else:
         raise ValueError("illegal operator in logic expression" + str(exp))
 def is_prop_symbol(s):
@@ -102,18 +82,12 @@ def tt_check_all(kb, alpha, symbols, model):
         return (tt_check_all(kb, alpha, rest, extend(model, P, True)) and
                 tt_check_all(kb, alpha, rest, extend(model, P, False)))
 def pl_fc_entails(KB, q):
-    #print("pl_fc_entails")
-    #print(KB)
-    #print(q)
     count = {c: len(conjuncts(c.args[0]))
              for c in KB.clauses
-             if c.op == '==>'}
-    #print(count)
+             if c.op == '==>'} # loeb kui palju muutujaid on tuletamiseks vaja ja nimekirja tuletajatest
     inferred = defaultdict(bool)
-    #print(inferred)
     agenda = [s for s in KB.clauses if is_prop_symbol(s.op)]
-    print(agenda)
-    while agenda:
+    while agenda:       
         p = agenda.pop()
         if p == q:
             return True
@@ -122,19 +96,10 @@ def pl_fc_entails(KB, q):
             for c in KB.clauses_with_premise(p):
                 count[c] -= 1
                 if count[c] == 0:
-                    agenda.append(c.args[1])
-    #print(agenda)                
+                    agenda.append(c.args[1])              
+    
     return False
-def tt_entails(kb, alpha):
-    """Does kb entail the sentence alpha? Use truth tables. For propositional
-    kb's and sentences. [Figure 7.10]. Note that the 'kb' should be an
-    Expr which is a conjunction of clauses.
-    >>> tt_entails(expr('P & Q'), expr('Q'))
-    True
-    """
-    assert not variables(alpha)
-    symbols = list(prop_symbols(kb & alpha))
-    return tt_check_all(kb, alpha, symbols, {})
+
 def is_symbol(s):
     """A string s is a symbol if it starts with an alphabetic char.
     >>> is_symbol('R2D2')
@@ -222,18 +187,7 @@ def move_not_inwards(s):
     (~A & ~B)
     """
     s = expr(s)
-    if s.op == '~':
-        def NOT(b):
-            return move_not_inwards(~b)
-        a = s.args[0]
-        if a.op == '~':
-            return move_not_inwards(a.args[0])  # ~~A ==> A
-        if a.op == '&':
-            return associate('|', list(map(NOT, a.args)))
-        if a.op == '|':
-            return associate('&', list(map(NOT, a.args)))
-        return s
-    elif is_symbol(s.op) or not s.args:
+    if is_symbol(s.op) or not s.args:
         return s
     else:
         return Expr(s.op, *list(map(move_not_inwards, s.args)))
@@ -247,13 +201,6 @@ def eliminate_implications(s):
     a, b = args[0], args[-1]
     if s.op == '==>':
         return b | ~a
-    elif s.op == '<==':
-        return a | ~b
-    elif s.op == '<=>':
-        return (a | ~b) & (b | ~a)
-    elif s.op == '^':
-        assert len(args) == 2  # TODO: relax this restriction
-        return (a & ~b) | (~a & b)
     else:
         assert s.op in ('&', '|', '~')
         return Expr(s.op, *args)
@@ -296,13 +243,6 @@ class KB:
         """Add the sentence to the KB."""
         raise NotImplementedError
 
-    def ask(self, query):
-        """Return a substitution that makes the query true, or, failing that, return False."""
-        return first(self.ask_generator(query), default=False)
-
-    def ask_generator(self, query):
-        """Yield all the substitutions that make query true."""
-        raise NotImplementedError
 
     def retract(self, sentence):
         """Remove sentence from the KB."""
@@ -322,19 +262,6 @@ class PropKB(KB):
         """Add the sentence's clauses to the KB."""
         self.clauses.extend(conjuncts(to_cnf(sentence)))
 
-    def ask_generator(self, query):
-        print("ProbKB.ask_generator")
-        """Yield the empty substitution {} if KB entails query; else no results."""
-        if tt_entails(Expr('&', *self.clauses), query):
-            yield {}
-
-    def ask_if_true(self, query):
-        print("ProbKB.ask_if_true")
-        """Return True if the KB entails query, else return False."""
-        for _ in self.ask_generator(query):
-            return True
-        return False
-
     def retract(self, sentence):
         print("ProbKB.retract")
         """Remove the sentence's clauses from the KB."""
@@ -350,12 +277,6 @@ class PropDefiniteKB(PropKB):
         """Add a definite clause to this KB."""
         assert is_definite_clause(sentence), "Must be definite clause"
         self.clauses.append(sentence)
-
-    def ask_generator(self, query):
-        print("PropDefiniteKB.ask_generator")
-        """Yield the empty substitution if KB implies query; else nothing."""
-        if pl_fc_entails(self.clauses, query):
-            yield {}
 
     def retract(self, sentence):
         #print("PropDefiniteKB.retract")
@@ -375,16 +296,14 @@ for s in "P==>Q; (L&M)==>P; (B&L)==>M; (A&P)==>L; (A&B)==>L; A;B".split(';'):
 
 horn_clauses_KB = PropDefiniteKB() 
 """
-def tellExpressionsToAI(listOfPreviousMoves):
-    for item in listOfPreviousMoves:
-        rock_paper_scissors.tell(expr(item))
+
         #print(item)
 def checkWhoWon(aiMove,playerMove):
     print("aimove = "+aiMove)
     print("playerMove = "+playerMove)
     if aiMove==playerMove:
         print("Draw")
-    if (aiMove=="Scissors" and playerMove=="Paper") or (aiMove=="Paper" and playerMove=="Rock") or (aiMove=="Rock" and playerMove=="Scissors"):
+    elif (aiMove=="Scissors" and playerMove=="Paper") or (aiMove=="Paper" and playerMove=="Rock") or (aiMove=="Rock" and playerMove=="Scissors"):
         print("AI won!!")
     else:
         print("Player won")
@@ -392,15 +311,14 @@ def getComputerMove(playerMove):
     if pl_fc_entails(rock_paper_scissors, expr("Scissors")):
         aiMove='Scissors'
         checkWhoWon(aiMove,playerMove)
-        #print("ARVUTI VALIS KÄÄRID")
-    if pl_fc_entails(rock_paper_scissors, expr("Rock")):
+    elif pl_fc_entails(rock_paper_scissors, expr("Rock")):
         aiMove='Rock'
         checkWhoWon(aiMove,playerMove)
-        #print("ARVUTI VALIS KIVI")
-    if pl_fc_entails(rock_paper_scissors, expr("Paper")):
+    elif pl_fc_entails(rock_paper_scissors, expr("Paper")):
         aiMove='Paper'
         checkWhoWon(aiMove,playerMove)
-        #print("ARVUTI VALIS PABERI")
+    else:
+        print("something wrong")
         
 rock_paper_scissors= PropDefiniteKB()
 
@@ -411,77 +329,30 @@ rock_paper_scissors.tell(expr("(ScissorsI&ScissorsII)==>Rock"))
 rock_paper_scissors.tell(expr("(Rock1&PaperII)==>Scissors"))
 rock_paper_scissors.tell(expr("(RockII&PaperI)==>Scissors"))
 
-
 rock_paper_scissors.tell(expr("(ScissorsI&PaperII)==>Rock"))
 rock_paper_scissors.tell(expr("(ScissorsII&PaperI)==>Rock"))
 
 rock_paper_scissors.tell(expr("(RockI&ScissorsII)==>Paper"))
 rock_paper_scissors.tell(expr("(RockII&ScissorsI)==>Paper"))
 
+
 rock_paper_scissors.tell(expr("PaperI"))
 rock_paper_scissors.tell(expr("RockII"))
 input_list = ["Rock","Paper","Scissors"]
 i=0
-listOfPreviousMoves=["PaperI","RockII"]#Rock#Scissors#Scissors
+listOfPreviousMoves=["PaperI","RockII"]
 while True:
-    #rock_paper_scissors.retract(expr(listOfPreviousMoves[0]))
     if i!=0:
-        #print(listOfPreviousMoves)
-        #rock_paper_scissors.retract(expr(listOfPreviousMoves[0]))
-        #rock_paper_scissors.retract(expr(listOfPreviousMoves[1]))
         listOfPreviousMoves.pop(0)
-        #print(listOfPreviousMoves)
     i+=1
     move = input("Rock,Paper or Scissors? ")
-
     if i%2==1 and move in input_list:
         player_move=move+"I"
-        #listOfPreviousMoves.append(player_move)
-        #rock_paper_scissors.tell(expr(player_move))
-        #tellExpressionsToAI(listOfPreviousMoves)
-        #getComputerMove(move)
     elif i%2==0 and move in input_list:
         player_move=move+"II"
-        #listOfPreviousMoves.append(player_move)
-        #rock_paper_scissors.tell(expr(player_move))
-        #tellExpressionsToAI(listOfPreviousMoves)
-        #getComputerMove(move)
     else:
         raise Exception("Wrong text")
     getComputerMove(move)
     rock_paper_scissors.retract(expr(listOfPreviousMoves[0]))
     rock_paper_scissors.tell(expr(player_move))
     listOfPreviousMoves.append(player_move)
-    #print(listOfPreviousMoves)
-    #print(rock_paper_scissors.clauses_with_premise)
-    
-    
-#rock_paper_scissors.tell(expr("PaperI"))
-#rock_paper_scissors.tell(expr("RockII"))
-#rock_paper_scissors.tell(expr("Paper1"))
-#rock_paper_scissors.tell(expr("Paper2"))
-#rock_paper_scissors.tell(expr("Scissors1"))
-#rock_paper_scissors.tell(expr("Scissors2"))
-#rock_paper_scissors.tell(expr("Kivi"))
-#rock_paper_scissors.tell(expr("Kivi"))
-
-#rock_paper_scissors.tell(expr("test"))
-#rock_paper_scissors.tell(expr("test==>test2"))
-
-
-# s in "(ROCK1&ROCK2)==>B;(B&B)==>C;(C&C)==>A;ROCK1;ROCK2".split(';'):
-#    rock_paper_scissors.tell(expr(s))
-#print(pl_fc_entails(rock_paper_scissors, expr('Scissors')))
-
-
-#getComputerMove()
-
-
-#print(pl_fc_entails(rock_paper_scissors, expr("Paber")))
-#data="P==>Q; (L&M)==>P; (B&L)==>M; (A&P)==>L; (A&B)==>L; A;B"
-#print(horn_clauses_KB.ask_if_true(expr('Q')))
-#print(horn_clauses_KB.ask_if_true(expr('Q')))
-
-#print(horn_clauses_KB.ask_generator(expr('Q')))
-#horn_clauses_KB.pl_fc_entails(horn_clauses_KB, expr('Q'))
-#print(pl_fc_entails(data,'Q'))
