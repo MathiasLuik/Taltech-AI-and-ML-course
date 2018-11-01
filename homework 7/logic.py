@@ -210,7 +210,6 @@ def tt_entails(kb, alpha):
     symbols = list(prop_symbols(kb & alpha))
     return tt_check_all(kb, alpha, symbols, {})
 
-
 def tt_check_all(kb, alpha, symbols, model):
     """Auxiliary routine to implement tt_entails."""
     if not symbols:
@@ -224,7 +223,6 @@ def tt_check_all(kb, alpha, symbols, model):
         P, rest = symbols[0], symbols[1:]
         return (tt_check_all(kb, alpha, rest, extend(model, P, True)) and
                 tt_check_all(kb, alpha, rest, extend(model, P, False)))
-
 
 def prop_symbols(x):
     """Return the set of all propositional symbols in x."""
