@@ -193,7 +193,7 @@ def query_player(game, state, playerTurn):
     """Make a move by querying standard input."""
     print("current state:")
     game.display(state)
-    print("available moves: {}".format(game.actions(state, playerTurn)))
+    #print("available moves: {}".format(game.actions(state, playerTurn)))
     print("")
     #whoseTurn=state.to_move
     #print(whoseTurn)
@@ -290,7 +290,7 @@ class Game:
         """Play an n-person, move-alternating game."""
         state = self.initial
         #playerTurn=self.startingPlayer
-        print(self.toho)
+        #print(self.toho)
         #print(players[0].__name__)
         #print(players[1].__name__)
         while True:

@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Dec  8 16:01:00 2018
+
+@author: Mathias
+"""
+
 """
 autod erinevate andmetega. 
 scikit-learn, pandas packetid.  import sklearn, pole mul olemas
@@ -24,7 +31,7 @@ car_data = pandas.read_csv("car.data",
     names=features + ["class"])   # lisab kõik featurid ja seejärel viimane column on class
 #1725    low    low  5more    more      big   high  vgood
 #print(car_data)
-
+print(car_data)
 X_text = car_data.loc[:, features]
 #print(X_text)
 X = pandas.get_dummies(X_text) # teeb kõik erinevevad safety variablid low/med/highiks ja teeb neist 1 0 dummid                                       

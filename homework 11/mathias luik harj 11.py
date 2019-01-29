@@ -7,7 +7,7 @@ NHL_EMF=[[0.1,0.3,0.8],[0.5,0.4,0.19],[0.4,0.3,0.01]]
 
 #textingActivity=[L,N,N,L,H,N,N,N,N,N,N,H]
 #textingActivity=[N,H,L,L,L,N,L,N,L,N,N,L]
-textingActivity=[H,L,H,N,N,L,H,N,L,L,L,N]
+#textingActivity=[H,L,H,N,N,L,H,N,L,L,L,N]
 
 def calculatingTransition(state,depth,whichArray):
     transitionArray=[]
