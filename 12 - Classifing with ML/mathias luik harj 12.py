@@ -39,9 +39,12 @@ X = pandas.get_dummies(X_text) # teeb kõik erinevevad safety variablid low/med/
 #print(X.columns)                                                                
 
 y = car_data["class"]
+
 #print(y)
+
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.3)
+
 # no shuffling
 #X_train, X_test, y_train, y_test = train_test_split(
  #   X, y, test_size=0.3, shuffle=False) # võtab kõikidest arraydest 30% ära, teeb test andmeteks
@@ -78,6 +81,7 @@ y4 = y_train[y_train == "vgood"]
 #print(y4)
 
 biggest_class = X1.shape[0]
+print("aa",biggest_class)
 
 X2r, y2r = resample(X2, y2, n_samples=biggest_class)
 X3r, y3r = resample(X3, y3, n_samples=biggest_class)
