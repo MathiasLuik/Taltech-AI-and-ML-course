@@ -40,7 +40,7 @@ X = pandas.get_dummies(X_text) # teeb kõik erinevevad safety variablid low/med/
 
 y = car_data["class"]
 
-#print(y)
+print("siin on y",y)
 
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.3)
